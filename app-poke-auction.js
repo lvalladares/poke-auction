@@ -24,11 +24,11 @@ async function eventQuery(){
 
         if (auction["_tokenId"] <= maxTokenNumber) {
 
+            const auction = eventData["returnValues"];
             const tokenID = auction["_tokenId"];
 
             if (eventData["event"] == "AuctionCreated") {
                 console.log(eventData["event"]);
-                const auction = eventData["returnValues"];
                 const startingPrice = web3.utils.fromWei(auction["_startingPrice"], 'ether');
                 const endingPrice = web3.utils.fromWei(auction["_endingPrice"], 'ether');
                 const duration = auction["_duration"] / 86400;
@@ -53,7 +53,6 @@ async function eventQuery(){
 
             if (eventData["event"] == "AuctionSuccessful") {
                 console.log(eventData["event"]);
-                const auction = eventData["returnValues"];
                 const totalPrice = web3.utils.fromWei(auction["_totalPrice"], 'ether');
 
                 mg.messages.create('sandboxc757905146dc4c80bcb8b67681a1ad06.mailgun.org', {
