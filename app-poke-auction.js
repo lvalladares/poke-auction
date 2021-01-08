@@ -17,7 +17,7 @@ const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 async function eventQuery(){
 
-    const maxTokenNumber = 1000000;
+    const maxTokenNumber = 10000;
 
     contract.events.allEvents()
     .on('data', (eventData) => {
