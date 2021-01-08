@@ -22,11 +22,10 @@ async function eventQuery(){
     contract.events.allEvents()
     .on('data', (eventData) => {
 
-        if (auction["_tokenId"] <= maxTokenNumber) {
+        const auction = eventData["returnValues"];
+        const tokenID = auction["_tokenId"];
 
-            const auction = eventData["returnValues"];
-            const tokenID = auction["_tokenId"];
-
+        if (tokenID <= maxTokenNumber) {
             if (eventData["event"] == "AuctionCreated") {
                 console.log(eventData["event"]);
                 const startingPrice = web3.utils.fromWei(auction["_startingPrice"], 'ether');
