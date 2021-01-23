@@ -18,7 +18,6 @@ const rpcURL = process.env.RPC_URL_MAINNET;
 // const rpcURL = process.env.RPC_URL_KOVAN;
 // const rpcURL = 'http://localhost:8545'
 const web3 = new Web3(rpcURL);
-const BN = web3.utils.BN;
 const auctionContract = new web3.eth.Contract(abis.axies.axieClockAuction, addresses.axies.axieClockAuction);
 const axieCore = new web3.eth.Contract(abis.axies.axieCore, addresses.axies.axieCore);
 
@@ -80,8 +79,8 @@ const init = async () => {
         const price = (web3.utils.toBN(currentPrice).add(priceExtra)).toString();
 
         // const gasCost = await tx.estimateGas({from: admin, value: currentPrice});
-        const gasCost = 220733; // UPDATE
-        const txCost = parseFloat(web3.utils.fromWei((web3.utils.toBN(gasCost).mul(web3.utils.toBN(gasPrice.average))).toString())); // in ETH
+        const gasCost = 205572; // gas limit
+        const txCost = parseFloat(web3.utils.fromWei((web3.utils.toBN(gasCost).mul(web3.utils.toBN(_gasPrice))).toString())); // in ETH
 
         const data = tx.encodeABI();
 
@@ -100,19 +99,21 @@ const init = async () => {
         console.log('gas cost ', gasCost);
         console.log('tx cost ', txCost);
 
-        if(!dryrun) {
-            try {
-                const receipt = await web3.eth.sendTransaction(txData);
-                console.log(receipt.transactionHash);
-            } catch (e) {
-                console.log(e)
-            }
+        if(dryrun) {
+            return;
+        }
+
+        try {
+            const receipt = await web3.eth.sendTransaction(txData);
+            console.log(receipt.transactionHash);
+        } catch (e) {
+            console.log(e)
         }
     }
 
 
 
-    async function createAuction(from, tokenId, startingPrice, endingPrice, duration) {
+    async function createAuction(tokenId, startingPrice, endingPrice, duration, _gasPrice, dryrun=false) {
         const tx = auctionContract.methods.createAuction(
             addresses.axies.axieCore,
             tokenId,
@@ -121,48 +122,53 @@ const init = async () => {
             duration
         );
 
-        console.log(addresses.axies.axieCore);
-        try {
-            // const gasCost = await tx.estimateGas({from: from, value: startingPrice});
-            const gasCost = 205027;
-            const txCost = (gasPrice.fast * gasCost) / Math.pow(10, 9); // in ETH
+        // const gasCost2 = await tx.estimateGas({from: admin});
+        const gasCost = 248571;
+        const txCost = parseFloat(web3.utils.fromWei((web3.utils.toBN(gasCost).mul(web3.utils.toBN(_gasPrice))).toString())); // in ETH
 
-            const data = tx.encodeABI();
-            const txData = {
-                from: admin,
-                to: auctionContract.options.address,
-                data,
-                gas: gasCost,
-                gasPrice: gasPrice.fast
-            };
+        const data = tx.encodeABI();
+        const txData = {
+            from: admin,
+            to: auctionContract.options.address,
+            data,
+            gas: gasCost,
+            gasPrice: _gasPrice
+        };
 
-            const receipt = await web3.eth.sendTransaction(txData);
-            console.log(txCost);
-            console.log(txData);
+        console.log('gas price', _gasPrice);
+        console.log('gas cost ', gasCost);
+        console.log('tx cost ', txCost);
 
-        } catch (e) {
-            console.log(e);
+        if(dryrun) {
+            return;
         }
+
+        try {
+            const receipt = await web3.eth.sendTransaction(txData);
+            console.log(receipt.transactionHash);
+        } catch (e) {
+            console.log(e)
+        }
+
     }
 
 
-    await bidAxie(238417, gasPrice.fast, true);
 
 
 
+    // await bidAxie(199618, gasPrice.fast, true); // dry run TRUE
+
+    // const auctionStartPrice = web3.utils.toWei('0.090', 'ether');
+    // const auctionEndPrice = web3.utils.toWei('0.025', 'ether');
+    // const auctionTime = 84600 * 7;
+
+    // await createAuction(238470, auctionStartPrice, auctionEndPrice, auctionTime, gasPrice.average, true); // dryrun = true
 
 
-
-
-
-    // await createAuction(admin, 220599, "30000000000000000", "60000000000000000", "86400");
-
-    // await getCurrentPrice(218714);
-    // await balanceOf(admin);
-    // await ownerOf(220599);
-    // await getAxie(220599);
-
-    // day 86400
+    await getCurrentPrice(232);
+    await balanceOf(admin);
+    await ownerOf(699);
+    await getAxie(35);
 
 }
 
