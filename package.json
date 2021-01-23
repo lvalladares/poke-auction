@@ -1,7 +1,18 @@
 {
+  "name": "poke-auction",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
     "mailgun.js": "^2.0.6",
+    "node-fetch": "^2.6.1",
     "web3": "^1.3.1"
   }
 }
